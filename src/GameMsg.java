@@ -1,6 +1,6 @@
 public class GameMsg {
     public static final String GAME_START="ゲームを開始します。";
-    public static final String BET_POINT="賭けポイントを入力してください。(1-100)";
+    public static final String BET_POINT="賭けポイントを入力してください。(1-100) ";
     public static final String BET_ERROR="1～100の数値を入力してください。";
     public static final String GET_TWO_CARD="カードを二枚配ります。";
     public static final String YOUR_CARDS="あなたの手札：";
@@ -14,7 +14,8 @@ public class GameMsg {
     public static final String YOU_DRAW = "引き分け";
     public static final String WIN_FINISH = "2000ポイントを超えました。あなたの勝ちです。";
     public static final String LOSE_FINISH = "ポイントがなくなりました。あなたの負けです。";
-
+    public static final String SUM = "合計:";
+    public static final String MY_POINT = "所持ポイント:";
     public static final String BJ_A = "表ブラックジャック! 賭けポイント15倍!";
     public static final String BJ_B = "裏ブラックジャック! 賭けポイント5倍!";
     public static final String BJ_C = "ブラックジャック! 賭けポイント2.5倍!";
@@ -25,4 +26,19 @@ public class GameMsg {
     public static final int WIN = 0;
     public static final int LOSE = 1;
     public static final int DRAW = 2;
+
+    public static final int START_POINT = 1000;
+    public static final int WIN_POINT = 2000;
+    public static final int LOSE_POINT = 0;
+
+    public static final int MAX_BET_POINT = 100;
+    public static final int MIN_BET_POINT = 1;
+
+    public static final String YES = "Y";
+    public static final String NO = "N";
+
+    public static final int BURST_NUM = 21;
+    public static final int STOP_DRAW = 17;
+
+
 }

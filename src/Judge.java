@@ -1,34 +1,33 @@
-import java.util.LinkedList;
-import java.util.List;
-
 public class Judge {
-    public static int judge() {
-        Boolean p_isWin;
-        if(Hand.getPlayersHandsSum()>21){
+    //勝敗判定
+    public static int judge(Hand playersHands, Hand dealersHands ) {
+        int playersHandsSum = playersHands.getHandsSum();
+        int dealersHandsSum = dealersHands.getHandsSum();
+        if(playersHandsSum>GameMsg.BURST_NUM){
             System.out.println(GameMsg.YOU_LOSE);
             return GameMsg.LOSE;
         }
-        else if(Hand.getDealersHandsSum()>21){
+        else if(dealersHandsSum>GameMsg.BURST_NUM){
             System.out.println(GameMsg.YOU_WIN);
             return GameMsg.WIN;
         }
 
-        if(Hand.getPlayersHandsSum()>Hand.getDealersHandsSum()){
+        if(playersHandsSum>dealersHandsSum){
             System.out.println(GameMsg.YOU_WIN);
             return GameMsg.WIN;
         }
-        else if(Hand.getPlayersHandsSum()<Hand.getDealersHandsSum()){
+        else if(playersHandsSum<dealersHandsSum){
             System.out.println(GameMsg.YOU_LOSE);
             return GameMsg.LOSE;
         }
         //同点の場合の処理
         else {
-            if(Hand.getPlayersHandsSum()==21){
-                if(Hand.getPlayersHands().size()==2&&Hand.getDealersHands().size()>=3){
+            if(playersHandsSum==GameMsg.BURST_NUM){
+                if(playersHands.getHands().size()==2&&dealersHands.getHands().size()>=3){
                     System.out.println(GameMsg.YOU_WIN);
                     return GameMsg.WIN;
                 }
-                else if(Hand.getPlayersHands().size()>=3&&Hand.getDealersHands().size()==2){
+                else if(playersHands.getHands().size()>=3&&dealersHands.getHands().size()==2){
                     System.out.println(GameMsg.YOU_LOSE);
                     return GameMsg.LOSE;
                 }

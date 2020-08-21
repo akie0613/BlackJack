@@ -1,15 +1,15 @@
 public class Card {
-    // フィールド
-    private String num;
+    //トランプの数宇
+    private String num_s;
+    //トランプの点数
     private int num_i;
+    //トランプのマーク
     private String mark;
 
-    // コンストラクタ
     public Card( int randNum, int randMark ) {
-        //num = Integer.toString(randNum);
         switch (randNum) {
             case 0:
-                num = "A";
+                num_s = "A";
                 num_i =1;
                 break;
             case 1:
@@ -21,19 +21,19 @@ public class Card {
             case 7:
             case 8:
             case 9:
-                num = Integer.toString(randNum + 1);
+                num_s = Integer.toString(randNum + 1);
                 num_i = randNum +1;
                 break;
             case 10:
-                num = "J";
+                num_s = "J";
                 num_i = 10;
                 break;
             case 11:
-                num = "Q";
+                num_s = "Q";
                 num_i = 10;
                 break;
             case 12:
-                num = "K";
+                num_s = "K";
                 num_i = 10;
                 break;
         }
@@ -53,8 +53,8 @@ public class Card {
         }
 
     }
-    public String getNum() {
-        return num;
+    public String getNum_s() {
+        return num_s;
     }
     public String getMark() {
         return mark;

@@ -27,10 +27,4 @@ public class CardStuck {
         Card card = deck.poll();
         return card;
     }
-
-    public static LinkedList<Card> getDeck() {
-        return deck;
-    }
-
-
 }

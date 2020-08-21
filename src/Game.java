@@ -1,4 +1,4 @@
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -7,57 +7,67 @@ import java.io.InputStreamReader;
 public class Game {
     public static void startGame() throws IOException {
         System.out.println(GameMsg.GAME_START);
-        while (Hand.getPoint()>0 && Hand.getPoint()<2000){
+        //Handオブジェクト作成
+        List<Card> p_hands = new ArrayList<Card>();
+        Hand playersHands = new Hand(p_hands);
+        List<Card> d_hands = new ArrayList<Card>();
+        Hand dealersHands = new Hand(d_hands);
+
+        //初期ポイント設定
+        playersHands.setPoint(GameMsg.START_POINT);
+        while (playersHands.getPoint()>GameMsg.LOSE_POINT && playersHands.getPoint()<GameMsg.WIN_POINT){
+
             //掛けポイント入力
-            betPoint();
+            betPoint(playersHands);
 
             //デッキ作成
-            LinkedList<Card> deck ;
             CardStuck.createDeck();
 
             //プレイヤーにカードを2枚配る
             System.out.println(GameMsg.GET_TWO_CARD);
-            Hand.addPlayersHands(CardStuck.drawCard());
-            Hand.addPlayersHands(CardStuck.drawCard());
+            playersHands.addHands(CardStuck.drawCard());
+            playersHands.addHands(CardStuck.drawCard());
+
             //ディーラーにカードを2枚配る
-            Hand.addDealersHands(CardStuck.drawCard());
-            Hand.addDealersHands(CardStuck.drawCard());
+            dealersHands.addHands(CardStuck.drawCard());
+            dealersHands.addHands(CardStuck.drawCard());
 
             //プレイヤーのカードを表示
             System.out.println(GameMsg.YOUR_CARDS);
-            showHands(Hand.getPlayersHands());
-            System.out.println("合計" + Hand.getPlayersHandsSum());
+            showHands(playersHands.getHands());
+            System.out.println(GameMsg.SUM + playersHands.getHandsSum());
 
             //ディーラーのカードを表示
             System.out.println(GameMsg.DEALERS_CARDS);
-            System.out.println(Hand.getDealersHands().get(0).getMark()+Hand.getDealersHands().get(0).getNum()+"\t*");
+            System.out.println(dealersHands.getHands().get(0).getMark()+dealersHands.getHands().get(0).getNum_s()+"\t*");
 
             //プレイヤーがカードを引くかどうか選択
-            drawOrStand();
+            drawOrStand(playersHands);
 
             //ディーラーがカードを引く
             System.out.println(GameMsg.DEALERS_TURN);
-            DealersAction();
+            DealersAction(dealersHands);
 
             //勝敗判定
-            int result = Judge.judge();
+            int result = Judge.judge(playersHands,dealersHands);
 
             //元のポイントを保持
-            int oldPoint = Hand.getPoint();
+            int oldPoint = playersHands.getPoint();
             //点数計算
-            Hand.calculatePoint(result);
+            playersHands.calculatePoint(result,playersHands);
 
             //結果のポイント
-            System.out.println("所持ポイント:"+oldPoint+"->"+Hand.getPoint());
+            System.out.println(GameMsg.MY_POINT+oldPoint+"->"+playersHands.getPoint());
 
             //手札情報をクリアする
-            Hand.clearHandsInfo();
+            playersHands.clearHandsInfo();
+            dealersHands.clearHandsInfo();
         }
         //ゲーム終了
-        if(Hand.getPoint()>=2000){
+        if(playersHands.getPoint()>=GameMsg.WIN_POINT){
             System.out.println(GameMsg.WIN_FINISH);
         }
-        else if(Hand.getPoint()<=0){
+        else if(playersHands.getPoint()<=GameMsg.LOSE_POINT){
             System.out.println(GameMsg.LOSE_FINISH);
         }
     }
@@ -65,36 +75,36 @@ public class Game {
     //手札出力メソッド
     private static void showHands(List<Card> hands){
         for (int i = 0; i< hands.size(); i++){
-            System.out.print(hands.get(i).getMark()+hands.get(i).getNum()+"\t");
+            System.out.print(hands.get(i).getMark()+hands.get(i).getNum_s()+"\t");
         }
         System.out.println();
     }
 
     //プレイヤーがカードを引くかどうか選択
-    private static void drawOrStand() throws IOException {
+    private static void drawOrStand(Hand hands) throws IOException {
         System.out.println(GameMsg.ASK_DRAW_CARD);
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(isr);
         while (true){
             String str = br.readLine();
             str = str.toUpperCase();
-            if(str.equals("Y")){
-                Hand.addPlayersHands(CardStuck.drawCard());
-                showHands(Hand.getPlayersHands());
-                System.out.println("合計" + Hand.getPlayersHandsSum());
-                if(Hand.getPlayersHandsSum()<21){
+            if(str.equals(GameMsg.YES)){
+                hands.addHands(CardStuck.drawCard());
+                showHands(hands.getHands());
+                System.out.println(GameMsg.SUM + hands.getHandsSum());
+                if(hands.getHandsSum()<GameMsg.BURST_NUM){
                     System.out.println(GameMsg.ASK_DRAW_CARD);
                     continue;
                 }
-                else if(Hand.getPlayersHandsSum()>21){
+                else if(hands.getHandsSum()>GameMsg.BURST_NUM){
                     System.out.println(GameMsg.BURST);
                     return;
                 }
-                else if(Hand.getPlayersHandsSum()==21){
+                else if(hands.getHandsSum()==GameMsg.BURST_NUM){
                     return ;
                 }
             }
-            else if(str.equals("N")){
+            else if(str.equals(GameMsg.NO)){
                 return ;
             }
             else {
@@ -104,10 +114,10 @@ public class Game {
     }
 
     //賭けポイント入力メソッド
-    private static void betPoint() throws IOException {
+    private static void betPoint(Hand hands) throws IOException {
         //賭けポイントを入力
         System.out.print(GameMsg.BET_POINT);
-        System.out.println("\t所持ポイント: "+ Hand.getPoint());
+        System.out.println(GameMsg.MY_POINT+ hands.getPoint());
         InputStreamReader isr = new InputStreamReader(System.in);
         BufferedReader br = new BufferedReader(isr);
         int bet ;
@@ -115,8 +125,8 @@ public class Game {
             String str = br.readLine();
             if(isNumber(str)){
                 bet = Integer.parseInt(str);
-                if(bet>=1&&bet<=100){
-                    Hand.setBet(bet);
+                if(bet>=GameMsg.MIN_BET_POINT&&bet<=GameMsg.MAX_BET_POINT){
+                    hands.setBet(bet);
                     break;
                 }
                 else {
@@ -130,16 +140,16 @@ public class Game {
     }
 
     //ディーラーの行動メソッド
-    private static void DealersAction(){
-        showHands(Hand.getDealersHands());
-        System.out.println("合計" + Hand.getDealersHandsSum());
+    private static void DealersAction(Hand hands){
+        showHands(hands.getHands());
+        System.out.println(GameMsg.SUM + hands.getHandsSum());
         //手札の合計が17以上になるまで引く
-        while (Hand.getDealersHandsSum()<17){
-            Hand.addDealersHands(CardStuck.drawCard());
-            showHands(Hand.getDealersHands());
-            System.out.println("合計" + Hand.getDealersHandsSum());
+        while (hands.getHandsSum()<GameMsg.STOP_DRAW){
+            hands.addHands(CardStuck.drawCard());
+            showHands(hands.getHands());
+            System.out.println(GameMsg.SUM + hands.getHandsSum());
         }
-        if(Hand.getDealersHandsSum()>21){
+        if(hands.getHandsSum()>GameMsg.BURST_NUM){
             System.out.println(GameMsg.BURST);
         }
     }
